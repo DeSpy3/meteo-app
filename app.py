@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv() 
 api_key = os.getenv("API_KEY")
 
-ville = "Nantes"
+ville = input("Entrez le nom de la ville : ")
 url = f"http://api.openweathermap.org/data/2.5/weather?q={ville}&appid={api_key}&units=metric&lang=fr"
 response = requests.get(url)
 #print(f"Code de statut : {response.status_code}")
