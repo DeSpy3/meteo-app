@@ -1,0 +1,310 @@
+/* ==========================================================
+   Météo App — Liquid Glass
+   ========================================================== */
+
+:root {
+  /* Ciel dégagé de jour (palette par défaut) */
+  --bg: #0a4aa8;
+  --n1: #3b9dff;
+  --n2: #8fd0ff;
+  --n3: #2a6fe0;
+  --n4: #ffd36b;
+  --texte: #ffffff;
+  --texte-doux: rgba(255, 255, 255, 0.68);
+
+  --verre: linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.06));
+  --verre-leger: rgba(255, 255, 255, 0.12);
+  --bord: rgba(255, 255, 255, 0.28);
+  --reflet-haut: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --reflet-bas: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+
+  --rayon-panneau: 36px;
+  --rayon-carte: 28px;
+  --rayon-pilule: 999px;
+
+  --police: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+/* Couleurs déclarées pour pouvoir fondre doucement d'une météo à l'autre */
+@property --bg { syntax: "<color>"; inherits: true; initial-value: #0a4aa8; }
+@property --n1 { syntax: "<color>"; inherits: true; initial-value: #3b9dff; }
+@property --n2 { syntax: "<color>"; inherits: true; initial-value: #8fd0ff; }
+@property --n3 { syntax: "<color>"; inherits: true; initial-value: #2a6fe0; }
+@property --n4 { syntax: "<color>"; inherits: true; initial-value: #ffd36b; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  font-family: var(--police);
+  color: var(--texte);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  transition: --bg 1.2s ease, --n1 1.2s ease, --n2 1.2s ease, --n3 1.2s ease, --n4 1.2s ease;
+}
+
+/* ---------- Fond : nappes de couleur qui dérivent lentement ---------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -1;
+  background:
+    radial-gradient(40% 40% at 22% 25%, var(--n1) 0%, transparent 70%),
+    radial-gradient(34% 34% at 80% 18%, var(--n2) 0%, transparent 70%),
+    radial-gradient(44% 44% at 72% 85%, var(--n3) 0%, transparent 70%),
+    radial-gradient(30% 30% at 14% 82%, var(--n4) 0%, transparent 70%);
+  filter: blur(50px) saturate(130%);
+  animation: derive 28s ease-in-out infinite alternate;
+}
+
+/* ---------- Ambiances météo (classe posée par le JS : data-meteo="10d") ---------- */
+/* Nuageux */
+body[data-meteo^="02"], body[data-meteo^="03"], body[data-meteo^="04"] {
+  --bg: #2f3f58; --n1: #6f84a3; --n2: #97a9c2; --n3: #4c607b; --n4: #b4c1d3;
+}
+/* Pluie */
+body[data-meteo^="09"], body[data-meteo^="10"] {
+  --bg: #0f1c36; --n1: #36598c; --n2: #4f77a6; --n3: #243f60; --n4: #6a8cb2;
+}
+/* Orage */
+body[data-meteo^="11"] {
+  --bg: #0d0b24; --n1: #4a3a8f; --n2: #2c3b70; --n3: #6a4fb5; --n4: #c9a93a;
+}
+/* Neige */
+body[data-meteo^="13"] {
+  --bg: #3a5676; --n1: #8fb4dc; --n2: #b3d0ea; --n3: #6d93bd; --n4: #d7e6f4;
+}
+/* Brume */
+body[data-meteo^="50"] {
+  --bg: #394350; --n1: #7f8b99; --n2: #a3adb9; --n3: #5f6b79; --n4: #bcc3cc;
+}
+/* Nuit (toujours en dernier : elle prend le dessus quel que soit le temps) */
+body[data-meteo$="n"] {
+  --bg: #050b1f; --n1: #1e3a8a; --n2: #4a3d9e; --n3: #0f2a5c; --n4: #7466d4;
+}
+
+@keyframes derive {
+  from { transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1); }
+  to   { transform: translate3d(3%, 3%, 0) rotate(12deg) scale(1.12); }
+}
+
+/* ---------- Panneau principal en verre liquide ---------- */
+section {
+  position: relative;
+  width: min(100%, 440px);
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  border-radius: var(--rayon-panneau);
+  background: var(--verre);
+  border: 1px solid var(--bord);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow:
+    var(--reflet-haut),
+    var(--reflet-bas),
+    inset 0 0 28px rgba(255, 255, 255, 0.06),
+    0 40px 80px -24px rgba(5, 8, 40, 0.6);
+}
+
+/* Reflet spéculaire en haut à gauche */
+section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(120% 55% at 0% 0%, rgba(255, 255, 255, 0.3), transparent 55%);
+}
+
+section > * {
+  position: relative;
+}
+
+h1 {
+  grid-column: 1 / -1;
+  margin: 0 0 8px;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- Champ de recherche ---------- */
+input {
+  min-width: 0;
+  padding: 15px 20px;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--texte);
+  background: var(--verre-leger);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon-pilule);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.18), var(--reflet-bas);
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+
+input::placeholder {
+  color: var(--texte-doux);
+}
+
+input:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.18),
+    0 0 0 4px rgba(255, 255, 255, 0.22);
+}
+
+/* ---------- Bouton ---------- */
+button {
+  padding: 15px 24px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--texte);
+  cursor: pointer;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.14));
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: var(--rayon-pilule);
+  box-shadow: var(--reflet-haut), 0 10px 24px -8px rgba(5, 8, 40, 0.5);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s, box-shadow 0.25s;
+}
+
+button:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+button:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 3px;
+}
+
+/* ---------- Résultat ---------- */
+#resultatMeteo {
+  grid-column: 1 / -1;
+  margin: 12px 0 0;
+  text-align: center;
+  color: var(--texte-doux);
+}
+
+#resultatMeteo:empty {
+  display: none;
+}
+
+.meteo-carte {
+  padding: 24px 20px 20px;
+  border-radius: var(--rayon-carte);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: var(--reflet-haut), var(--reflet-bas), 0 18px 40px -20px rgba(5, 8, 40, 0.5);
+  color: var(--texte);
+  animation: apparition 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes apparition {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.meteo-carte img {
+  display: block;
+  width: 110px;
+  height: 110px;
+  margin: -12px auto 0;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.meteo-carte p {
+  margin: 0;
+}
+
+/* « Il fait / 18°C / à Paris (ciel dégagé) » : la température devient le héros */
+.meteo-carte p:first-of-type {
+  font-size: 1.05rem;
+  line-height: 1.4;
+  text-transform: capitalize;
+}
+
+.meteo-carte strong {
+  display: block;
+  margin: 2px 0;
+  font-size: clamp(3.5rem, 18vw, 4.75rem);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  text-shadow: 0 4px 30px rgba(255, 255, 255, 0.25);
+}
+
+.meteo-carte p:last-of-type {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  color: var(--texte);
+  background: var(--verre-leger);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--rayon-pilule);
+  box-shadow: var(--reflet-haut);
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 480px) {
+  body {
+    padding: 16px;
+  }
+
+  section {
+    padding: 24px 20px;
+    grid-template-columns: 1fr;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+/* ---------- Accessibilité & compatibilité ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  .meteo-carte {
+    animation: none;
+  }
+
+  button {
+    transition: none;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  section {
+    background: rgba(30, 40, 90, 0.75);
+  }
+}

@@ -22,7 +22,7 @@ document.getElementById('rechercherBtn').addEventListener('click', () => {
             // 4. On affiche le résultat sur la page
             resultat.innerHTML = `
                 <div class="meteo-carte">
-                    <img src="https://openweathermap.org/img/wn/${data.icone}@2x.png" alt="Icône de la météo">
+                    <img src="https://openweathermap.org/img/wn/${data.icon}@2x.png" alt="Icône de la météo">
                     <p>Il fait <strong>${data.temperature}°C</strong> à ${data.ville} (${data.description}).</p>
                     <p>💧 Humidité : ${data.humidite}% | 💨 Vent : ${data.vitesse_vent} m/s</p>
                 </div>`;
