@@ -2,6 +2,15 @@ import os
 import requests
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
+from pydantic import BaseModel
+
+class MeteoResponse(BaseModel):
+    ville: str
+    temperature: float
+    description: str
+    humidity: int
+    vitesse_vent: float
+    icon: str
 
 load_dotenv()
 api_key = os.getenv("API_KEY")
@@ -18,7 +27,7 @@ app.add_middleware(
     allow_methods=["*"],
 )
 
-@app.get("/api/meteo/{ville}")
+@app.get("/api/meteo/{ville}", response_model=MeteoResponse)
 def get_weather(ville: str):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={ville}&appid={api_key}&units=metric&lang=fr"
     response = requests.get(url)
@@ -29,9 +38,11 @@ def get_weather(ville: str):
         return {
             "ville": ville.capitalize(),
             "temperature": donnees["main"]["temp"],
-            "description": donnees["weather"][0]["description"]
+            "description": donnees["weather"][0]["description"],
+            "humidity": donnees["main"]["humidity"],
+            "vitesse_vent": donnees["wind"]["speed"],
+            "icon": donnees["weather"][0]["icon"]
         }
     else:
-        # On renvoie une vraie erreur HTTP au client si la ville n'existe pas
         raise HTTPException(status_code=response.status_code, detail="Ville introuvable ou erreur réseau")
     
