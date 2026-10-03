@@ -3,7 +3,6 @@
    ========================================================== */
 
 :root {
-  /* Ciel dégagé de jour (palette par défaut) */
   --bg: #0a4aa8;
   --n1: #3b9dff;
   --n2: #8fd0ff;
@@ -101,7 +100,7 @@ body[data-meteo$="n"] {
   to   { transform: translate3d(3%, 3%, 0) rotate(12deg) scale(1.12); }
 }
 
-/* ---------- Panneau principal en verre liquide ---------- */
+/* ---------- Panneau principal Liquid glass ---------- */
 section {
   position: relative;
   width: min(100%, 440px);
@@ -121,8 +120,7 @@ section {
     0 40px 80px -24px rgba(5, 8, 40, 0.6);
 }
 
-/* Reflet spéculaire en haut à gauche */
-section::before {
+section::before { 
   content: "";
   position: absolute;
   inset: 0;
@@ -246,7 +244,6 @@ button:focus-visible {
   margin: 0;
 }
 
-/* « Il fait / 18°C / à Paris (ciel dégagé) » : la température devient le héros */
 .meteo-carte p:first-of-type {
   font-size: 1.05rem;
   line-height: 1.4;
