@@ -30,6 +30,19 @@ document.getElementById('rechercherBtn').addEventListener('click', () => {
         .catch(error => {
             resultat.textContent = "Erreur : " + error.message;
         });
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            fetch(`http://127.0.0.1:8000/api/meteo/coord/${lat}/${lon}`)
+        },
+        (error) => {
+            console.error("Erreur de géolocalisation : ", error);
+        });
+    }
+        else {
+            console.log("La géolocalisation n'est pas disponible sur ce navigateur.");
+        }
 });
 
 // Écouteur pour la touche Entrée
