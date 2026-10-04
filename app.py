@@ -27,8 +27,8 @@ app.add_middleware(
     allow_methods=["*"],
 )
 
-@app.get("/api/meteo/{ville}", response_model=MeteoResponse)
-@app.get("api/meteo/coord/{lat}/{lon}")
+
+@app.get("/api/meteo/coord/{lat}/{lon}")
 async def get_weather_by_coordinates(lat: float, lon: float):
     api_key = os.getenv("API_KEY")
     url = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=fr"
@@ -47,6 +47,7 @@ async def get_weather_by_coordinates(lat: float, lon: float):
     else:
         raise HTTPException(status_code=response.status_code, detail="Coordonnées invalides ou erreur réseau")
 
+@app.get("/api/meteo/{ville}", response_model=MeteoResponse)
 def get_weather(ville: str):
     url = f"http://api.openweathermap.org/data/2.5/weather?q={ville}&appid={api_key}&units=metric&lang=fr"
     response = requests.get(url)

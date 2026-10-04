@@ -1,3 +1,19 @@
+ const resultat = document.getElementById('resultatMeteo');
+ 
+ if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            fetch(`http://127.0.0.1:8000/api/meteo/coord/${lat}/${lon}`)
+        },
+        (error) => {
+            console.error("Erreur de géolocalisation : ", error);
+        });
+    }
+        else {
+            console.log("La géolocalisation n'est pas disponible sur ce navigateur.");
+        }
+
 document.getElementById('rechercherBtn').addEventListener('click', () => {
     const villeInput = document.getElementById('villeInput');
     // 1. On récupère la ville tapée
@@ -24,25 +40,12 @@ document.getElementById('rechercherBtn').addEventListener('click', () => {
                 <div class="meteo-carte">
                     <img src="https://openweathermap.org/img/wn/${data.icon}@2x.png" alt="Icône de la météo">
                     <p>Il fait <strong>${data.temperature}°C</strong> à ${data.ville} (${data.description}).</p>
-                    <p>💧 Humidité : ${data.humidite}% | 💨 Vent : ${data.vitesse_vent} m/s</p>
+                    <p>💧 Humidité : ${data.humidity}% | 💨 Vent : ${data.vitesse_vent} m/s</p>
                 </div>`;
         })
         .catch(error => {
             resultat.textContent = "Erreur : " + error.message;
-        });
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            fetch(`http://127.0.0.1:8000/api/meteo/coord/${lat}/${lon}`)
-        },
-        (error) => {
-            console.error("Erreur de géolocalisation : ", error);
-        });
-    }
-        else {
-            console.log("La géolocalisation n'est pas disponible sur ce navigateur.");
-        }
+        })
 });
 
 // Écouteur pour la touche Entrée
