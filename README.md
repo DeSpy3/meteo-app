@@ -6,7 +6,7 @@ L'application permet aux utilisateurs de :
 - Rechercher la météo en temps réel d'une ville spécifique.
 - Détecter automatiquement la météo de leur emplacement actuel grâce à la géolocalisation du navigateur.
 
-## 🛠️ Technologies et Architecture
+## Technologies et Architecture
 
 Ce projet repose sur une architecture découplée (Frontend / Backend) :
 
@@ -14,7 +14,7 @@ Ce projet repose sur une architecture découplée (Frontend / Backend) :
 *   **Backend :** Python 3, **FastAPI** (pour la création des routes API), Uvicorn (Serveur ASGI), `requests` (pour l'appel à l'API distante).
 *   **API Externe :** [OpenWeatherMap](https://openweathermap.org/api)
 
-## ⚖️ Conformité Légale (RGPD & CNIL)
+## Conformité Légale (RGPD & CNIL)
 
 Ce projet a été développé en respectant les principes de confidentialité des données (*Privacy by Design*) :
 *   **Consentement explicite :** L'accès à la position de l'utilisateur repose strictement sur l'API native `navigator.geolocation` du navigateur. Aucune localisation n'est forcée sans l'accord préalable via la fenêtre d'autorisation du navigateur.
@@ -23,7 +23,7 @@ Ce projet a été développé en respectant les principes de confidentialité de
 
 ---
 
-## 📋 Prérequis
+## Prérequis
 
 Pour exécuter ce projet localement, vous devez avoir installé :
 *   [Python 3.8 ou supérieur](https://www.python.org/downloads/)
@@ -32,7 +32,7 @@ Pour exécuter ce projet localement, vous devez avoir installé :
 
 ---
 
-## 🚀 Installation
+## Installation
 
 **1. Cloner le dépôt**
 ```bash
@@ -65,7 +65,7 @@ API_KEY=votre_cle_api_openweathermap_ici
 
 ---
 
-## 💻 Utilisation (Lancement des serveurs locaux)
+## Utilisation (Lancement des serveurs locaux)
 
 En raison des restrictions de sécurité des navigateurs modernes concernant la géolocalisation, le frontend doit être servi via un serveur local. Vous aurez besoin de **deux terminaux** ouverts à la racine du projet.
 
@@ -84,4 +84,4 @@ python -m http.server 5500
 
 **Étape 3 : Ouvrir l'application**
 Rendez-vous dans votre navigateur web à l'adresse exacte suivante :
-👉 **`http://127.0.0.1:5500`**
+--> **`http://127.0.0.1:5500`**
